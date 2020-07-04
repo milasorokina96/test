@@ -1,0 +1,13 @@
+{
+  "parserOptions": {
+    "ecmaVersion": "2017"
+  },
+  "rules": {
+    "semi": "error",
+    "arrow-body-style": "error",
+    "arrow-spacing": "error",
+    "no-console": "error",
+    "no-extra-semi": "error",
+    "eqeqeq": "error"
+  }
+}

@@ -1,0 +1,55 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+.file-section{
+  padding: 10px;
+}
+.input-block,
+.result-title {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.input-text {
+  font-weight: bold;
+  width: 200px;
+  outline: none;
+  font-size: 12px;
+  padding: 5px;
+}
+.parent-error {
+  position: relative;
+}
+.error {
+  visibility: hidden;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  color: #D71E02;
+  font-size: 12px;
+}
+
+.button-findFile {
+  width: 200px;
+  padding: 5px 10px 5px 10px;
+  cursor: pointer;
+  border: 1px solid #333;
+  outline: none;
+  &:hover {
+    background-color: #333333;
+    color: #ffffff;
+  }
+}
+.result-output {
+  &-title {
+    font-weight: bold;
+    padding-bottom: 5px;
+  }
+  &-words {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+}
