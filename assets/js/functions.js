@@ -6,28 +6,43 @@ function createForm() {
     form.setAttribute('name', 'fileForm');
     section.appendChild(form);
     createInputBlock(form);
-    createBtnFind(form);
+    createBtnAnalyze(form);
+    findFile();
     createResult(section);
 }
 
 function createInputBlock(form) {
-    const label = document.createElement('label');
-    label.setAttribute('for', 'fileLabel');
-    label.innerText = 'Please write path to the file or its name..';
-    form.appendChild(label);
     let div = document.createElement('div');
     div.classList.add('parent-error', 'input-block');
     form.appendChild(div);
+    createLabel(div);
     createInput(div);
+    createInputFile(div);
     createError(div);
+}
+
+function createLabel(div) {
+    const label = document.createElement('label');
+    label.setAttribute('for', 'fileText');
+    label.innerText = 'Please write path to the file or its name..';
+    div.appendChild(label);
 }
 
 function createInput(div) {
     let input = document.createElement('input');
     input.classList.add('input-text');
     input.setAttribute('type', 'text');
-    input.setAttribute('name', 'file');
+    input.setAttribute('name', 'fileText');
     input.setAttribute('id', 'fileText');
+    div.appendChild(input);
+}
+
+function createInputFile(div) {
+    let input = document.createElement('input');
+    input.classList.add('input-file');
+    input.setAttribute('type', 'file');
+    input.setAttribute('name', 'file');
+    input.setAttribute('id', 'file');
     div.appendChild(input);
 }
 
@@ -38,12 +53,12 @@ function createError(div) {
     div.appendChild(error);
 }
 
-function createBtnFind(form) {
+function createBtnAnalyze(form) {
     const button = document.createElement('button');
     button.setAttribute('type', 'button');
-    button.classList.add('button-findFile');
-    button.setAttribute('id', 'findFile');
-    button.innerText = 'Find file';
+    button.classList.add('button-analyzeText');
+    button.setAttribute('id', 'analyzeText');
+    button.innerText = 'Analyze text';
     form.appendChild(button);
 }
 
@@ -56,7 +71,7 @@ function createResult(section) {
     createWordsResult(output);
     createLettersResult(output);
     block.appendChild(output);
-    findFile();
+    analyzeText();
 }
 
 function createWordsResult(output) {
@@ -74,7 +89,7 @@ function createLettersResult(output) {
 }
 
 function calcWordsResult(outputWords, txt) {
-    let words = txt.split('/');
+    let words = txt.split('[\]');
     let totalOfWords = 0;
     let arrOfUniqueWords = [];
     for(let i = 0; i < words.length; i++){
@@ -151,10 +166,19 @@ function showResult(arr, output, max) {
 }
 
 function findFile() {
-    const findBtn = document.getElementById('findFile');
-    findBtn.addEventListener('click', () => {
-        const form = document.forms.fileForm;
-        let txt = form.elements.file.value;
+    const findBtn = document.getElementById('file');
+    findBtn.onchange = function () {
+        let form = document.forms.fileForm;
+        let file = form.elements.file.value;
+        document.getElementById('fileText').value = file;
+    };
+}
+
+function analyzeText() {
+    const analyzeBtn = document.getElementById('analyzeText');
+    analyzeBtn.addEventListener('click', () => {
+        let form = document.forms.fileForm;
+        let txt = form.elements.fileText.value;
         let d = /[0-9]/;
         let s = /\s/;
         if(!txt || d.test(txt) || s.test(txt)){

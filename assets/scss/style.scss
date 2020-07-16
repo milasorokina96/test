@@ -4,16 +4,23 @@
 body {
   margin: 0;
 }
-.file-section{
+.file-section {
   padding: 10px;
 }
-.input-block,
+
+.input-block {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 15px;
+}
 .result-title {
   padding-top: 15px;
   padding-bottom: 15px;
 }
 
 .input-text {
+  margin-top: 15px;
+  margin-bottom: 15px;
   font-weight: bold;
   width: 200px;
   outline: none;
