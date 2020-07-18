@@ -51,7 +51,7 @@ gulp.task('browser-sync', () => {
     });
     watch('./assets/js/*.js', 'buildJS');
     watch('./assets/scss/*.scss', 'buildCSS');
-    watch('./index.html', 'move');
+    watch(['./index.html'], 'move');
 });
 
 gulp.task('deleteBuild', () => {

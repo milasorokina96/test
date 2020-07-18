@@ -4,6 +4,7 @@ function createForm() {
     const section = document.getElementById('fileSection');
     const form = document.createElement('form');
     form.setAttribute('name', 'fileForm');
+    form.classList.add('file-form');
     section.appendChild(form);
     createInputBlock(form);
     createBtnAnalyze(form);
@@ -24,7 +25,8 @@ function createInputBlock(form) {
 function createLabel(div) {
     const label = document.createElement('label');
     label.setAttribute('for', 'fileText');
-    label.innerText = 'Please write path to the file or its name..';
+    label.classList.add('main-text');
+    label.innerText = 'Please choose the file on your computer or write some text';
     div.appendChild(label);
 }
 
@@ -38,6 +40,11 @@ function createInput(div) {
 }
 
 function createInputFile(div) {
+    const label = document.createElement('label');
+    label.setAttribute('for', 'file');
+    label.classList.add('input-fileLabel');
+    label.innerText = 'Upload file';
+    div.appendChild(label);
     let input = document.createElement('input');
     input.classList.add('input-file');
     input.setAttribute('type', 'file');
@@ -48,7 +55,7 @@ function createInputFile(div) {
 
 function createError(div) {
     let error = document.createElement('div');
-    error.innerText = `Incorrect path or name of the file`;
+    error.innerText = `No path to the file or no text`;
     error.classList.add('error');
     div.appendChild(error);
 }
@@ -64,45 +71,73 @@ function createBtnAnalyze(form) {
 
 function createResult(section) {
     const block = document.createElement('div');
-    block.classList.add('result');
+    block.classList.add('modal-result');
+    block.setAttribute('id', 'modalResult');
     section.appendChild(block);
     const output = document.createElement('div');
-    output.classList.add('result-output');
-    createWordsResult(output);
-    createLettersResult(output);
+    output.classList.add('modal-result-output');
+    const close = document.createElement('div');
+    close.classList.add('modal-result-close');
+    close.innerText='х';
+    close.setAttribute('id', 'close');
+    output.appendChild(close);
     block.appendChild(output);
+    const content = document.createElement('div');
+    content.classList.add('modal-result-content');
+    output.appendChild(content);
+    const resultTitle = document.createElement('div');
+    resultTitle.classList.add('main-text');
+    resultTitle.innerText = 'Result';
+    content.appendChild(resultTitle);
+    createWordsResult(content);
+    createLettersResult(content);
     analyzeText();
 }
 
-function createWordsResult(output) {
+function createWordsResult(content) {
     const outputWords = document.createElement('div');
     outputWords.setAttribute('id', 'resultOutputWords');
     outputWords.classList.add('result-output-words');
-    output.appendChild(outputWords);
+    content.appendChild(outputWords);
 }
 
-function createLettersResult(output) {
+function createLettersResult(content) {
     const outputLetters = document.createElement('div');
     outputLetters.setAttribute('id', 'resultOutputLetters');
     outputLetters.classList.add('result-output-letters');
-    output.appendChild(outputLetters);
+    content.appendChild(outputLetters);
+}
+
+function createResultContent(txt) {
+    let outputWords = document.getElementById('resultOutputWords');
+    outputWords.innerHTML = '';
+    const outputWordsTitle = document.createElement('div');
+    outputWordsTitle.classList.add('result-output-title');
+    outputWordsTitle.innerText = 'TOP 20 Words';
+    outputWords.appendChild(outputWordsTitle);
+    let outputLetters = document.getElementById('resultOutputLetters');
+    outputLetters.innerHTML = '';
+    const outputLettersTitle = document.createElement('div');
+    outputLettersTitle.classList.add('result-output-title');
+    outputLettersTitle.innerText = 'TOP 10 Letters';
+    outputLetters.appendChild(outputLettersTitle);
+    calcWordsResult(outputWords, txt);
+    calcLettersResult(outputLetters, txt);
+    closeModal();
 }
 
 function calcWordsResult(outputWords, txt) {
-    let words = txt.split('[\]');
+    let words = txt.split('\\');
     let totalOfWords = 0;
     let arrOfUniqueWords = [];
     for(let i = 0; i < words.length; i++){
-        if (words[i] >= 'a' && words[i] <= 'z') {
-            if (arrOfUniqueWords[words[i]] !== undefined) {
-                arrOfUniqueWords[words[i]]++;
-            } else {
-                arrOfUniqueWords[words[i]] = 1;
-            }
-            totalOfWords++;
+        let word = words[i].toLowerCase();
+        if (arrOfUniqueWords[word]) {
+            arrOfUniqueWords[word]++;
         } else {
-            document.querySelector('.error').style.display = 'block';
+            arrOfUniqueWords[word] = 1;
         }
+        totalOfWords++;
     }
     let arrOfWords = [];
     for (let key in arrOfUniqueWords) {
@@ -110,7 +145,7 @@ function calcWordsResult(outputWords, txt) {
             name: key,
             entry: arrOfUniqueWords[key],
             freq: arrOfUniqueWords[key] / totalOfWords,
-            toString: function() {
+            toString: function () {
                 return 'Word ' + this.name + ': entry - ' + this.entry + ' , frequency of entry - ' + this.freq;
             }
         };
@@ -121,20 +156,21 @@ function calcWordsResult(outputWords, txt) {
 }
 
 function calcLettersResult(outputLetters, txt) {
-    let total = 0;
+    let totalOfLetters = 0;
     let letters = [];
     for (let i = 0; i < txt.length; i++) {
         let letter = txt[i].toLowerCase();
-        if (letter >= 'a' && letter <= 'z') {
+        let W = /\W/;
+        if (W.test(letter)) {
+            continue;
+        } else {
             if (letters[letter]) {
                 letters[letter]++;
             } else {
                 letters[letter] = 1;
             }
-        } else {
-            document.querySelector('.error').style.display = 'block';
         }
-        total++;
+        totalOfLetters++;
     }
 
     let arrOfLetters = [];
@@ -142,8 +178,8 @@ function calcLettersResult(outputLetters, txt) {
         key = {
             name: key,
             entry: letters[key],
-            freq: letters[key] / total,
-            toString: function() {
+            freq: letters[key] / totalOfLetters,
+            toString: function () {
                 return 'Letter ' + this.name + ': entry - ' + this.entry + ' , frequency of entry - ' + this.freq;
             }
         };
@@ -167,11 +203,11 @@ function showResult(arr, output, max) {
 
 function findFile() {
     const findBtn = document.getElementById('file');
-    findBtn.onchange = function () {
+    findBtn.addEventListener('change', () => {
         let form = document.forms.fileForm;
         let file = form.elements.file.value;
         document.getElementById('fileText').value = file;
-    };
+    });
 }
 
 function analyzeText() {
@@ -179,27 +215,20 @@ function analyzeText() {
     analyzeBtn.addEventListener('click', () => {
         let form = document.forms.fileForm;
         let txt = form.elements.fileText.value;
-        let d = /[0-9]/;
-        let s = /\s/;
-        if(!txt || d.test(txt) || s.test(txt)){
+        if(!txt){
             document.querySelector('.error').style.visibility = 'visible';
         } else {
+            document.getElementById('modalResult').style.visibility = 'visible';
             document.querySelector('.error').style.visibility = 'hidden';
-            let outputWords = document.getElementById('resultOutputWords');
-            outputWords.innerHTML = '';
-            const outputWordsTitle = document.createElement('div');
-            outputWordsTitle.classList.add('result-output-title');
-            outputWordsTitle.innerText = 'TOP 20 Words';
-            outputWords.appendChild(outputWordsTitle);
-            let outputLetters = document.getElementById('resultOutputLetters');
-            outputLetters.innerHTML = '';
-            const outputLettersTitle = document.createElement('div');
-            outputLettersTitle.classList.add('result-output-title');
-            outputLettersTitle.innerText = 'TOP 10 Letters';
-            outputLetters.appendChild(outputLettersTitle);
-            calcWordsResult(outputWords, txt);
-            calcLettersResult(outputLetters, txt);
-            form.elements.file.value = '';
+            createResultContent(txt);
+            form.elements.fileText.value = '';
         }
+    });
+}
+
+function closeModal() {
+    const closeBtn = document.getElementById('close');
+    closeBtn.addEventListener('click', () => {
+        document.getElementById('modalResult').style.visibility = 'hidden';
     });
 }
