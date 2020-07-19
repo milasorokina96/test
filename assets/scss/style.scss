@@ -83,8 +83,6 @@ body {
   bottom: 0;
   z-index: 500;
   &-output {
-    display: flex;
-    flex-direction: column;
     max-height: 800px;
     min-width: 600px;
     padding: 30px;
@@ -114,10 +112,16 @@ body {
 .result-output {
   &-title {
     font-weight: bold;
-    padding-bottom: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
-  &-words {
-    padding-top: 15px;
-    padding-bottom: 15px;
+  &-words,
+  &-letters {
+    width: 400px;
+    text-align: center;
   }
+}
+
+td {
+  padding: 10px;
 }

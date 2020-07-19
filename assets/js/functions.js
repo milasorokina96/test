@@ -95,14 +95,16 @@ function createResult(section) {
 }
 
 function createWordsResult(content) {
-    const outputWords = document.createElement('div');
+    const outputWords = document.createElement('table');
+    outputWords.setAttribute('border', '1');
     outputWords.setAttribute('id', 'resultOutputWords');
     outputWords.classList.add('result-output-words');
     content.appendChild(outputWords);
 }
 
 function createLettersResult(content) {
-    const outputLetters = document.createElement('div');
+    const outputLetters = document.createElement('table');
+    outputLetters.setAttribute('border', '1');
     outputLetters.setAttribute('id', 'resultOutputLetters');
     outputLetters.classList.add('result-output-letters');
     content.appendChild(outputLetters);
@@ -111,13 +113,13 @@ function createLettersResult(content) {
 function createResultContent(txt) {
     let outputWords = document.getElementById('resultOutputWords');
     outputWords.innerHTML = '';
-    const outputWordsTitle = document.createElement('div');
+    const outputWordsTitle = document.createElement('caption');
     outputWordsTitle.classList.add('result-output-title');
     outputWordsTitle.innerText = 'TOP 20 Words';
     outputWords.appendChild(outputWordsTitle);
     let outputLetters = document.getElementById('resultOutputLetters');
     outputLetters.innerHTML = '';
-    const outputLettersTitle = document.createElement('div');
+    const outputLettersTitle = document.createElement('caption');
     outputLettersTitle.classList.add('result-output-title');
     outputLettersTitle.innerText = 'TOP 10 Letters';
     outputLetters.appendChild(outputLettersTitle);
@@ -140,18 +142,7 @@ function calcWordsResult(outputWords, txt) {
         totalOfWords++;
     }
     let arrOfWords = [];
-    for (let key in arrOfUniqueWords) {
-        key = {
-            name: key,
-            entry: arrOfUniqueWords[key],
-            freq: arrOfUniqueWords[key] / totalOfWords,
-            toString: function () {
-                return 'Word ' + this.name + ': entry - ' + this.entry + ' , frequency of entry - ' + this.freq;
-            }
-        };
-        arrOfWords.push(key);
-        sortByEntry(arrOfWords);
-    }
+    createObj(arrOfUniqueWords, totalOfWords, arrOfWords);
     showResult(arrOfWords, outputWords, 20);
 }
 
@@ -172,31 +163,36 @@ function calcLettersResult(outputLetters, txt) {
         }
         totalOfLetters++;
     }
-
     let arrOfLetters = [];
-    for (let key in letters) {
-        key = {
-            name: key,
-            entry: letters[key],
-            freq: letters[key] / totalOfLetters,
-            toString: function () {
-                return 'Letter ' + this.name + ': entry - ' + this.entry + ' , frequency of entry - ' + this.freq;
-            }
-        };
-        arrOfLetters.push(key);
-        sortByEntry(arrOfLetters);
-    }
+    createObj(letters, totalOfLetters, arrOfLetters);
     showResult(arrOfLetters, outputLetters, 10);
 }
-
+function createObj(arrOfUnique, total, arr) {
+    for (let key in arrOfUnique) {
+        key = {
+            name: key,
+            entry: arrOfUnique[key],
+            frequency: arrOfUnique[key] / total,
+        };
+        arr.push(key);
+        sortByEntry(arr);
+    }
+}
 function sortByEntry(arrOfLetters) {
     arrOfLetters.sort((a, b) => b.entry > a.entry ? 1 : -1);
 }
 
 function showResult(arr, output, max) {
+    let trTitle = document.createElement('tr');
+    for (let key in arr[0]){
+        trTitle.innerHTML += '<td>' + key + '</td>';
+    }
+    output.appendChild(trTitle);
     for(let i = 0; i < arr.length; i++) {
         if (i < max) {
-            output.innerHTML += arr[i] + '<br/>';
+            let tr = document.createElement('tr');
+            tr.innerHTML += '<td>' + arr[i]['name'] + '</td><td>' + arr[i]['entry'] + '</td><td>' + arr[i]['frequency'] + '</td>';
+            output.appendChild(tr);
         }
     }
 }
